@@ -1,6 +1,9 @@
 import express from "express";
 // import { users, posts } from "./data.js";
 
+import { v4 as uuidv4 } from "uuid";
+import { posts } from "./data";
+
 const server = express();
 
 server.use(express.json()); // Middleware??
@@ -104,6 +107,39 @@ server.delete("/classes/:id", (req, res) => {
 
 // Request: method - POST, đường dẫn: /classes, body là 1 class mới
 // Response: status - 201, data là new classes
+
+// Câu 2: Viết API tạo user với các thông tin như trên users,
+// với id là random (uuid), email là duy nhất, phải kiểm tra được trùng email khi tạo user.
+
+server.post("/users", (req, res) => {
+  const randomId = uuidv4();
+
+  const { email } = req.body;
+  // Kiểm tra email là duy nhất trong danh sách users
+  //..
+
+  // Tạo thêm user nếu email là duy nhất
+  //...
+
+  // Hoặc trả về lỗi nếu đã có email tồn tại
+  res.status(400).send("Email existing!");
+});
+
+// Cau 7: Viết API tìm kiếm các bài post với content tương ứng được gửi lên từ query params.
+server.get("/posts", (req, res) => {
+  const query = req.query; // {content: "helloworld", isPublic: true} //Boolean()
+  console.log("query", query);
+  // Nếu có query là memberOver40: true thì trả những class có member > 40
+  // Nếu không thì trả toàn bộ classes
+  // URL : http://localhost:3000/classes?memberOver40=true&memberOver30=true
+
+  if (query.content) {
+    const post = posts.filter((item) => item.content === query.content);
+    res.status(200).send(post);
+  } else {
+    res.status(200).send(posts);
+  }
+});
 
 server.listen(3000, () => {
   console.log("Server running!");
