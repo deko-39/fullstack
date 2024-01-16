@@ -17,7 +17,13 @@
   ],
   "posts": [
     {
-      "userId": "9fceb585-042f-4f10-9cb5-37c529d93166",
+      "user": {
+        "id": "9fceb585-042f-4f10-9cb5-37c529d93166",
+        "userName": "Nobita",
+        "email": "nobita@japanese.com",
+        "age": 5,
+        "avatar": "https://i.kym-cdn.com/photos/images/original/000/985/256/d51.png"
+      },
       "postId": "d051b29e-d9c5-4cb1-89bf-38b31aef05f1",
       "content": "Chào mọi người!",
       "createdAt": "2023-09-22T12:30:00.000Z",
