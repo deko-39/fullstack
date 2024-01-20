@@ -24,7 +24,6 @@ const users = [
 const posts = [
   {
     userId: "9fceb585-042f-4f10-9cb5-37c529d93166",
-    postId: "d051b29e-d9c5-4cb1-89bf-38b31aef05f1",
     content: "Chào mọi người!",
     createdAt: "2023-09-22T12:30:00.000Z",
     isPublic: true,

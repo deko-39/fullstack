@@ -16,8 +16,8 @@ const BlogModel = mongoose.model("blog", BlogPost);
 // 127.0.0.1 = localhost = 0.0.0.0
 async function connectDb() {
   await mongoose.connect(
-    // "mongodb+srv://admin:admin@cluster0.1diowix.mongodb.net/mindx"
-    "mongodb://localhost:27017"
+    "mongodb+srv://mindx:mindx@cluster0.1diowix.mongodb.net/mindx"
+    // "mongodb://localhost:27017"
   );
 }
 
