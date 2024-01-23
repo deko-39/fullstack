@@ -23,7 +23,7 @@ function testMiddleware(req, res, next) {
   try {
     const { ip, headers, body, url } = req;
     console.log("Test middleware!");
-    next();
+    // next();
   } catch (error) {
     res.status(500).send("Server error!");
   }
