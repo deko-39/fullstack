@@ -45,8 +45,7 @@ mongoose
  * - Comment controller CRUD
  * - Comment model {postId, userId, content, date}
  * - Middleware authentication cho toàn bộ app với header x-username and inject req.user = user from user collection
- * - Middleware authorization check role "admin" from req.user để truy cập vào CRUD post và comment
- * - Middleware validation:
+ * - Middleware validation check role "user" trong req.user (1):
  *    + GET /posts/:postId thì yêu cầu req.user._id == post.userId (chỉ user tạo post mới xem được post)
  *    + POST /posts thì yêu cầu đủ trường của model post
  *    + PUT /posts/:postId thì yêu cầu user là người tạo post và đủ trường của model post
@@ -56,4 +55,5 @@ mongoose
  *    + POST /comments thì yêu cầu đủ trường của model comment
  *    + PUT /comments/:commentId thì yêu cầu user là người tạo comment và đủ trường của model comment
  *    + DELETE /comments/:commentId thì yêu cầu user là người tạo comment
+ * - Middleware authorization check role "admin" trong req.user để truy cập vào CRUD user/post/comment mà không cần validation (1)
  */
