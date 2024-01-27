@@ -1,7 +1,10 @@
 import express from "express";
 import { PostModel } from "../model/post.model.js";
 import { asyncCatch } from "..//utils/asyncCatch.js";
-import { getPostValidation } from "../middleware/post/getpost.validation.js";
+import {
+  createPostValidation,
+  getPostValidation,
+} from "../middleware/post/getpost.validation.js";
 
 const postController = express.Router();
 
@@ -40,12 +43,13 @@ postController.get(
   asyncCatch(getOnePost)
 );
 
-postController.post("/", async (req, res) => {
+async function creatPost() {
   try {
     const { content, date } = req.body;
     const newPost = await PostModel.create({
       content,
       date,
+      userId: req.user._id.toString(),
     });
     res.status(201).send({
       data: newPost,
@@ -56,7 +60,9 @@ postController.post("/", async (req, res) => {
     console.log(error);
     res.status(500).send("Server error!");
   }
-});
+}
+
+postController.post("/", createPostValidation, creatPost);
 
 postController.put("/:postId", async (req, res) => {
   try {

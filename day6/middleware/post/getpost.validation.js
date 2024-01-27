@@ -5,4 +5,13 @@ function getPostValidation(req, res, next) {
     throw new Error("postId is required!");
 }
 
-export { getPostValidation };
+function createPostValidation(req, res, next) {
+  if (!req.isAdmin) {
+    if (!content) throw new Error("No content found");
+    if (!date) throw new Error("No date found");
+    if (!req.user._id) throw new Error("No user found");
+  }
+  next();
+}
+
+export { getPostValidation, createPostValidation };

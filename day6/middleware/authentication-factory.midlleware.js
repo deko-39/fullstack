@@ -14,6 +14,7 @@ const middlewareFactory = function (headerName) {
             error: "Xác thực không thành công",
           });
         }
+        throw new Error("LOLOL");
 
         req.user = user;
 

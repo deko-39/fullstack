@@ -11,6 +11,7 @@ async function authorizationMiddleware(req, res, next) {
       });
     }
 
+    req.isAdmin = true;
     next();
   } catch (error) {
     res.status(500).send("Server error!");

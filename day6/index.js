@@ -20,10 +20,11 @@ server.use(
   authorizationMiddleware,
   userController
 );
+
 server.use(
   "/posts",
-  middlewareFactory("x-username"),
-  middlewareFactory("x-admin"),
+  middlewareFactory("x-username"), //authen
+  authorizationMiddleware,
   postController
 );
 
