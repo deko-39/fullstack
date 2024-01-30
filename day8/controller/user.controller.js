@@ -12,6 +12,8 @@ userController.get(
   asyncCatch(author),
   asyncCatch(getAllUsers)
 );
+
+//BTVN: Hoàn thành CRUD user
 userController.put("/:userId", asyncCatch(authen), asyncCatch(author));
 userController.delete("/:userId", asyncCatch(authen), asyncCatch(author));
 userController.post("/:userId", asyncCatch(authen), asyncCatch(author));
