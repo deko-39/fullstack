@@ -23,9 +23,33 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
   const { username, email, password } = req.body;
   const user = await UserModel.findOne({
-    username: username || { $ne: null },
-    email: email || { $ne: null },
+    username: username || { $ne: null }, // $ne = not equals
+    email: email || { $ne: null }, // $ne = not equals
   });
+
+  // TH0: body = {}
+  /**
+   * const user = await UserModel.findOne({});
+   */
+  // TH1: body = {username: "aaaa"}
+  /**
+   * const user = await UserModel.findOne({
+      username: 'aaaa', // $ne = not equals
+    });
+  */
+  // TH2: body = {email: "aaaa@gmail.com"}
+  /**
+   * const user = await UserModel.findOne({
+      email: 'aaa@gmail.com', // $ne = not equals
+    });
+  */
+  // TH3: body = {email: "aaaa@gmail.com", username: 'aaa'}
+  /**
+   * const user = await UserModel.findOne({
+   *  username: 'aaa',
+      email: 'aaa@gmail.com', // $ne = not equals
+    });
+  */
 
   const result = bcrypt.compare(password, user.password);
   if (!result) {
@@ -55,8 +79,9 @@ export const refresh = (req, res, next) => {
   const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN);
 
   // Phải bỏ 2 trường này
-  const newPayload = _.omit(payload, ["exp", "iat"]);
+  const newPayload = _.omit(payload, ["exp", "iat"]); // expireAt vs issuedAt
 
+  // Check lại user trong db -> newPayload = user như dòng 60
   const accessToken = jwt.sign(newPayload, process.env.JWT_ACCESS_TOKEN, {
     expiresIn: "30s",
   });
