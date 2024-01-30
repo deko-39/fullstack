@@ -5,6 +5,8 @@ import morgan from "morgan";
 
 import { userController } from "./controller/user.controller.js";
 import { authController } from "./controller/auth.controller.js";
+import { asyncCatch } from "./utils/trycatch.js";
+import { authen } from "./utils/authen.js";
 
 dotenv.config();
 
