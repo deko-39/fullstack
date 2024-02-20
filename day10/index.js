@@ -52,6 +52,9 @@ server.use("/index", (req, res) => res.status(200).send("Hello mindx!"));
 server.post("/posts", upload.array("files"), async (req, res) => {
   try {
     const files = req.files; // upload.array
+    if (files.length > 2 || files.every((file) => file.size > 5 * 1024)) {
+      res.status(400).send("Too many files or files too large");
+    }
     // const file = req.file // upload.single
     const imageUrls = [];
     for (const file of files) {
@@ -101,6 +104,12 @@ server.delete("/posts/:postId", async (req, res) => {
     res.status(500).send("Error!");
   }
 });
+
+// Register user + avatar
+// Delete user
+// Update post
+// GET post
+// User - post relationship
 
 mongoose
   .connect(process.env.MONGODB)
