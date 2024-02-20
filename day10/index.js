@@ -5,13 +5,13 @@ import morgan from "morgan";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 
+dotenv.config();
+
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUD_KEY,
   api_secret: process.env.CLOUD_SECRET,
 });
-
-dotenv.config();
 
 // const diskStorage = multer.diskStorage({
 //   destination: function (req, file, cb) {
@@ -22,6 +22,23 @@ dotenv.config();
 //     cb(null, file.fieldname + "-" + uniqueSuffix + ".png");
 //   },
 // });
+
+const Schema = mongoose.Schema;
+
+const PostSchema = new Schema({
+  content: String,
+  createdAt: String,
+  isPublic: Boolean,
+  attachment: [
+    {
+      publicId: String,
+      url: String,
+    },
+  ],
+});
+
+const PostModel = mongoose.model("post", PostSchema);
+
 const memoryStorage = multer.memoryStorage();
 const upload = multer({ storage: memoryStorage });
 
@@ -32,10 +49,55 @@ server.use(morgan("combined")); // Logger
 
 server.use("/index", (req, res) => res.status(200).send("Hello mindx!"));
 
-server.post("/upload", upload.single("file"), async (req, res) => {
+server.post("/posts", upload.array("files"), async (req, res) => {
   try {
-    res.status(201).send(req.file);
+    const files = req.files; // upload.array
+    // const file = req.file // upload.single
+    const imageUrls = [];
+    for (const file of files) {
+      // const buffer = file.buffer?.data || []
+      const dataUrl = `data:${file.mimetype};base64,${file.buffer?.toString(
+        "base64"
+      )}`;
+      const fileName = file.originalname.split(".")[0];
+
+      const result = await cloudinary.uploader.upload(dataUrl, {
+        public_id: fileName,
+      });
+
+      imageUrls.push({ publicId: result.public_id, url: result.url });
+    }
+
+    const post = await PostModel.create({
+      content: req.body.content,
+      createdAt: new Date().getTime(),
+      isPublic: req.body.isPublic,
+      attachment: imageUrls,
+    });
+
+    res.status(201).send(post);
   } catch (error) {
+    console.log("error :>> ", error);
+    res.status(500).send("Error!");
+  }
+});
+
+server.delete("/posts/:postId", async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params.postId);
+    if (!post) {
+      res.status(400).send("No post found!");
+    }
+
+    for (const attachment of post.attachment) {
+      const publicId = attachment.publicId;
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    await PostModel.findByIdAndDelete(req.params.postId);
+    res.sendStatus(204);
+  } catch (error) {
+    console.log("error :>> ", error);
     res.status(500).send("Error!");
   }
 });
