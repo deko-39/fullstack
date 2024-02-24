@@ -1,6 +1,7 @@
 import express from "express";
 import { PostModel } from "../model/post.model.js";
 import { faker } from "@faker-js/faker";
+import { UserModel } from "../model/user.model.js";
 
 const postController = express.Router();
 
@@ -25,15 +26,31 @@ postController.get("/", async (req, res) => {
     // delete req.query.$limit;
     // delete req.query.$skip;
 
-    let { $skip, $limit, $sort, $gt, $lte, ...findQuery } = req.query; // Spread operator
+    // localhost:3000/posts?$skip=0&$limit=10&$sort=DESC&creator=mindx
+    let { $skip, $limit, $sort, creator, ...findQuery } = req.query; // Spread operator
 
     const total = await PostModel.countDocuments(); // Lấy total
 
-    const posts = await PostModel.find(findQuery) // Tìm kiếm
+    const posts = await PostModel.find(findQuery) // {name: "barba-cresco-carmen"}
+      .populate("userId", { match: { userName: { $eq: creator } } }) // Tìm kiếm
       .skip(Number($limit) * Number($skip)) // Phân trang
       .limit(Number($limit)) // Phân trang
       .sort({ createdAt: $sort === "ASC" ? 1 : -1 }); // Sắp xếp tăng/giảm
+
+    // const posts = await PostModel.aggregate([
+    //   {$lookup},// populate
+    //   {$match}, // userName = req.query.creator
+    //   {$skip},
+    //   {$limit}
+    //   {$facet} || {$setWindowFields}
+    // ]) --> Research
+
     /// Tối ưu sử dụng 1 query vào cơ sở dữ liệu để lấy cả data và tổng số resources - BTVN research
+
+    console.log("posts :>> ", posts);
+    // const result = posts.filter(
+    //   (post) => post.userId.userName === findQuery.creator
+    // );
 
     res.status(200).send({
       total,
@@ -68,8 +85,8 @@ postController.post("/", async (req, res) => {
     const newPost = await PostModel.create({
       userId,
       content: faker.lorem.paragraph({ min: 1, max: 3 }),
-      name: faker.lorem.text(),
-      isPublic: true,
+      name: faker.lorem.slug(),
+      isPublic: faker.datatype.boolean(),
       createdAt,
     });
     // Return status 201 + post document vừa được tạo trong mongodb

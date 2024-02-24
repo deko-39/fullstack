@@ -1,11 +1,15 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
+import { UserModel, UserSchema } from "./user.model.js";
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const PostSchema = new Schema({
   // _id: ObjectId,
-  userId: String,
+  userId: {
+    type: mongoose.Types.ObjectId,
+    ref: UserModel, // Model ref
+  },
   content: String,
   createdAt: String,
   updatedAt: String,
