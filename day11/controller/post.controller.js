@@ -32,7 +32,7 @@ postController.get("/", async (req, res) => {
     const total = await PostModel.countDocuments(); // Lấy total
 
     const posts = await PostModel.find(findQuery) // {name: "barba-cresco-carmen"}
-      .populate("userId", { match: { userName: { $eq: creator } } }) // Tìm kiếm
+      .populate("userId", { match: { userName: { $eq: creator } } }) // Tìm kiếm advance
       .skip(Number($limit) * Number($skip)) // Phân trang
       .limit(Number($limit)) // Phân trang
       .sort({ createdAt: $sort === "ASC" ? 1 : -1 }); // Sắp xếp tăng/giảm
@@ -44,6 +44,8 @@ postController.get("/", async (req, res) => {
     //   {$limit}
     //   {$facet} || {$setWindowFields}
     // ]) --> Research
+
+    // Lodash !!
 
     /// Tối ưu sử dụng 1 query vào cơ sở dữ liệu để lấy cả data và tổng số resources - BTVN research
 
